@@ -23,10 +23,10 @@ export function App() {
     setIsLoading(true)
     transactionsByEmployeeUtils.invalidateData()
 
+    // bug 5 : moved setIsLoading to after await employeeUtils.fetchAll()
     await employeeUtils.fetchAll()
-    await paginatedTransactionsUtils.fetchAll()
-
     setIsLoading(false)
+    await paginatedTransactionsUtils.fetchAll()
   }, [employeeUtils, paginatedTransactionsUtils, transactionsByEmployeeUtils])
 
   const loadTransactionsByEmployee = useCallback(
@@ -64,6 +64,11 @@ export function App() {
             if (newValue === null) {
               return
             }
+            // added this if statement for bug 3
+            if (newValue.id === "") {
+              await loadAllTransactions()
+              return
+            }
 
             await loadTransactionsByEmployee(newValue.id)
           }}
@@ -74,17 +79,20 @@ export function App() {
         <div className="RampGrid">
           <Transactions transactions={transactions} />
 
-          {transactions !== null && (
-            <button
-              className="RampButton"
-              disabled={paginatedTransactionsUtils.loading}
-              onClick={async () => {
-                await loadAllTransactions()
-              }}
-            >
-              View More
-            </button>
-          )}
+          {/* Bug 6: added more checks to see if view more button is showing*/}
+          {transactions !== null &&
+            paginatedTransactions != null &&
+            paginatedTransactions.nextPage !== null && (
+              <button
+                className="RampButton"
+                disabled={paginatedTransactionsUtils.loading}
+                onClick={async () => {
+                  await loadAllTransactions()
+                }}
+              >
+                View More
+              </button>
+            )}
         </div>
       </main>
     </Fragment>

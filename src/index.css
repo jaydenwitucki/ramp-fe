@@ -92,8 +92,9 @@ hr.RampBreak--l {
 
 .RampInputSelect--dropdown-container {
   display: none;
-  position: fixed;
+  position: fixed, absolute;
   width: 100%;
+
   max-width: 700px;
   border: 1px solid var(--color-darker-shade);
   margin-top: 0.5rem;
